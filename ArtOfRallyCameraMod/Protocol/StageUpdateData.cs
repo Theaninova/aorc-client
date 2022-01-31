@@ -1,4 +1,5 @@
 ﻿using System;
+
 // ReSharper disable InconsistentNaming
 
 namespace ArtOfRallyChampionshipMod.Protocol
@@ -24,9 +25,9 @@ namespace ArtOfRallyChampionshipMod.Protocol
             return new CarData
             {
                 frame = data.frame,
-                position = new []{ data.position.x, data.position.y, data.position.z },
-                rotation = new []{ data.rotation.x, data.rotation.y, data.rotation.z},
-                velocity = new []{data.velocity.x, data.velocity.y, data.velocity.z},
+                position = new[] { data.position.x, data.position.y, data.position.z },
+                rotation = new[] { data.rotation.x, data.rotation.y, data.rotation.z },
+                velocity = new[] { data.velocity.x, data.velocity.y, data.velocity.z },
                 throttleInput = data.throttleInput,
                 steeringInput = data.steeringInput,
                 brakeInput = data.brakeInput,
@@ -38,7 +39,7 @@ namespace ArtOfRallyChampionshipMod.Protocol
             };
         }
     }
-    
+
     [Serializable]
     public struct StageUpdateData
     {
