@@ -6,6 +6,7 @@
 
 [![](https://img.shields.io/badge/Controller%20Reference%20Implementation-GitHub-23292F)](https://github.com/Theaninova/aorc-reference-observer)
 [![](https://img.shields.io/badge/Server-GitHub-23292F)](https://github.com/Theaninova/aorc-server)
+[![Website](https://img.shields.io/website-up-down-green-red/https/theaninova.github.io/aorc-reference-observer/.svg?label=Controller%20Reference%20Site)](https://theaninova.github.io/aorc-reference-observer/)
 
 #### Launcher Support
 ![](https://img.shields.io/badge/GOG-Supprted-green)
