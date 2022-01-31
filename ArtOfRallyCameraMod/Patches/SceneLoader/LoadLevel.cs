@@ -10,7 +10,7 @@ namespace ArtOfRallyChampionshipMod.Patches.SceneLoader
     {
         public static void Prefix(int __0)
         {
-            Main.Client.EmitAsync("load_level", __0);
+            Main.Client.EmitAsync("loadLevel", __0);
         }
     }
 }
