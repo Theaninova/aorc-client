@@ -23,6 +23,10 @@
 
 ## Usage
 
+1. [![](https://img.shields.io/github/v/release/Theaninova/aorc-client?label=Download%20Client%20Mod)](https://github.com/Theaninova/aorc-client/releases/latest)
+2. [![](https://img.shields.io/github/v/release/Theaninova/aorc-server?label=Download%20Server)](https://github.com/Theaninova/aorc-server/releases/latest)
+3. [![Website](https://img.shields.io/website-up-down-green-red/https/theaninova.github.io/aorc-reference-observer/.svg?label=Controller%20Reference%20Site)](https://theaninova.github.io/aorc-reference-observer/)
+
 ## Features
 
 ## Info
