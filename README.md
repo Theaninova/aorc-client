@@ -2,6 +2,7 @@
 
 [![](https://img.shields.io/github/v/release/Theaninova/aorc-client?label=Download)](https://github.com/Theaninova/aorc-client/releases/latest)
 ![](https://img.shields.io/badge/Game%20Version-v1.3.3a-blue)
+[![GitHub license](https://img.shields.io/github/license/theaninova/aorc-client.svg)](https://github.com/wulkanat/aorc-client/blob/master/LICENSE)
 
 [![](https://img.shields.io/badge/Controller%20Reference%20Implementation-GitHub-23292F)](https://github.com/Theaninova/aorc-reference-observer)
 [![](https://img.shields.io/badge/Server-GitHub-23292F)](https://github.com/Theaninova/aorc-server)
