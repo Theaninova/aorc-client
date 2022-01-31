@@ -20,7 +20,8 @@ namespace ArtOfRallyChampionshipMod
             Settings = UnityModManager.ModSettings.Load<Settings.Settings>(modEntry);
             Client = new SocketIO("http://localhost:4593/users", new SocketIOOptions
             {
-                Transport = TransportProtocol.WebSocket
+                Transport = TransportProtocol.WebSocket,
+                Reconnection = true
             });
 
             var harmony = new Harmony(modEntry.Info.Id);
@@ -41,8 +42,8 @@ namespace ArtOfRallyChampionshipMod
             Client.JsonSerializer = new NewtonsoftJsonSerializer();
             Client.OnError += (sender, error) => Logger.Error(error);
             Client.OnConnected += (sender, args) => Logger.Log("Connected to server!");
+            Client.OnDisconnected += (sender, s) => Logger.Warning("Got disconnected");
             Client.OnReconnectAttempt += (sender, i) => Logger.Log($"Trying to reconnect {i}x");
-            Logger.Log("Trying to connect...");
             await Client.ConnectAsync();
         }
     }

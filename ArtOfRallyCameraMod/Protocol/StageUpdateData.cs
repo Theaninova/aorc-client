@@ -1,4 +1,5 @@
 ﻿using System;
+using UnityEngine;
 
 // ReSharper disable InconsistentNaming
 
@@ -47,39 +48,37 @@ namespace ArtOfRallyChampionshipMod.Protocol
     [Serializable]
     public struct CarData
     {
-        public int frame;
         public float[] position;
-        public byte[] rotation;
+        public float[] rotation;
         public float[] velocity;
-        public sbyte throttleInput;
-        public sbyte steeringInput;
-        public sbyte brakeInput;
-        public bool handbrakeInput;
-        public byte gear;
-        public bool resetCarThisFrame;
-        public sbyte engineCondition;
-        public sbyte dirtiness;
+        public float throttleInput;
+        public float steeringInput;
+        public float brakeInput;
+        public float handbrakeInput;
+        public float clutchInput;
+        public bool absTriggered;
+        public bool tcsTriggered;
+        public bool espTriggered;
         public DrivetrainData drivetrain;
 
-        public static CarData FromReplayKey(
-            ReplayKey_Car data,
-            Drivetrain drivetrain
-        )
+        public static CarData FromCarController(CarController data, Drivetrain drivetrain, Rigidbody body)
         {
+            var position1 = body.position;
+            var rotation1 = body.rotation.eulerAngles;
+            var velocity1 = body.velocity;
             return new CarData
             {
-                frame = data.frame,
-                position = new[] { data.position.x, data.position.y, data.position.z },
-                rotation = new[] { data.rotation.x, data.rotation.y, data.rotation.z },
-                velocity = new[] { data.velocity.x, data.velocity.y, data.velocity.z },
+                position = new[] { position1.x, position1.y, position1.z },
+                rotation = new[] { rotation1.x, rotation1.y, rotation1.z },
+                velocity = new[] { velocity1.x, velocity1.y, velocity1.z },
                 throttleInput = data.throttleInput,
-                steeringInput = data.steeringInput,
+                steeringInput = data.steerInput,
                 brakeInput = data.brakeInput,
                 handbrakeInput = data.handbrakeInput,
-                gear = data.gear,
-                resetCarThisFrame = data.resetCarThisFrame,
-                engineCondition = data.engineCondition,
-                dirtiness = data.dirtyness,
+                clutchInput = data.clutchInput,
+                absTriggered = data.ABSTriggered,
+                tcsTriggered = data.TCSTriggered,
+                espTriggered = data.ESPTriggered,
                 drivetrain = DrivetrainData.FromDrivetrain(drivetrain),
             };
         }
