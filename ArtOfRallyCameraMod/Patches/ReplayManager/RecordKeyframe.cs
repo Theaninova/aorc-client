@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using ArtOfRallyChampionshipMod.Protocol;
 using HarmonyLib;
 
 // ReSharper disable UnusedType.Global
@@ -6,15 +8,31 @@ using HarmonyLib;
 
 namespace ArtOfRallyChampionshipMod.Patches.ReplayManager
 {
-    [HarmonyPatch(typeof(global::ReplayManager), nameof(global::ReplayManager.NotifyEventEnded))]
+    [HarmonyPatch(typeof(StageTimerManager), "Update")]
     public class RecordKeyframe
     {
-        public static ReplayKey_Car CurrentCar;
-        
         // ReSharper disable once InconsistentNaming
-        public static void Postfix(ReplayInstance ___currentRecording)
+        public static void Postfix(StageTimerManager __instance)
         {
-            CurrentCar = ___currentRecording.data.keys.Last();
+            // if (GameEntryPoint.EventManager.status != EventStatusEnums.EventStatus.UNDERWAY) return;
+
+            try
+            {
+                var recording = global::ReplayManager.Instance().CurrentReplayDataRecording();
+                var dataExists = recording != null && recording.keys.Count != 0;
+
+                Main.Client.EmitAsync("stageUpdate", new StageUpdateData
+                {
+                    time = __instance.GetStageTimeMS(),
+                    carData = dataExists
+                        ? CarData.FromReplayKey(recording!.keys[recording.keys.Count - 1])
+                        : (CarData?)null,
+                });
+            }
+            catch (Exception e)
+            {
+                Main.Logger.Critical(e.Message);
+            }
         }
     }
 }
