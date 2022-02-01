@@ -32,7 +32,7 @@ server which forwards them to one or more observers.
 [![](https://img.shields.io/github/v/release/Theaninova/aorc-server?label=Download%20Server)](https://github.com/Theaninova/aorc-server/releases/latest)
 [![Website](https://img.shields.io/website-up-down-green-red/https/theaninova.github.io/aorc-reference-observer/.svg?label=Controller%20Reference%20Site)](https://theaninova.github.io/aorc-reference-observer/)
 
-1. Download the client and install it using the Unity Mod Manager
+1. Download the client and install it using the [Unity Mod Manager](https://www.nexusmods.com/site/mods/21/)
 2. Download the server
 3. Open the reference controller site to see the data
 
