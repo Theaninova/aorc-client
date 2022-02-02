@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using ArtOfRallyChampionshipMod.Protocol;
 using HarmonyLib;
+using TinyJson;
 using UnityEngine;
 
 // ReSharper disable UnusedType.Global
@@ -14,18 +15,19 @@ namespace ArtOfRallyChampionshipMod.Patches.CarController
     {
         public static Task? Task;
     }
-    
-    [HarmonyPatch(typeof(CarDynamics), "FixedUpdate")]
+
+    [HarmonyPatch(typeof(global::CarController), "FixedUpdate")]
     public class FixedUpdate
     {
         // ReSharper disable once InconsistentNaming
-        public static void Postfix(CarDynamics __instance, Drivetrain ___drivetrain, Rigidbody ___body)
+        public static void Postfix(global::CarController? __instance, Drivetrain? ___drivetrain, Rigidbody? ___body, CarDynamics? ___cardynamics)
         {
             if (LiveDataManager.Task is { IsCompleted: false }) return;
 
             var stageSceneManager = GameEntryPoint.EventManager;
             var time = stageSceneManager is global::StageSceneManager
-                ? stageSceneManager.stageTimerManager.GetStageTimeMS()
+                ? stageSceneManager.stageTimerManager != null ? stageSceneManager.stageTimerManager.GetStageTimeMS() :
+                0.0f
                 : 0.0f;
 
             try
@@ -33,12 +35,12 @@ namespace ArtOfRallyChampionshipMod.Patches.CarController
                 LiveDataManager.Task = Main.Client.EmitAsync("stageUpdate", new StageUpdateData
                 {
                     time = time,
-                    carData = CarData.FromCarController(__instance, ___drivetrain, ___body)
+                    carData = CarData.FromCarController(__instance, ___drivetrain, ___body, ___cardynamics)
                 });
             }
             catch (Exception e)
             {
-                Main.Logger.Critical(e.Message);
+                Main.Logger.Critical(e.ToString());
             }
         }
     }
