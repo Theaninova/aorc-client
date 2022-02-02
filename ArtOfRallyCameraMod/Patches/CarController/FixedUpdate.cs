@@ -24,13 +24,15 @@ namespace ArtOfRallyChampionshipMod.Patches.CarController
             if (LiveDataManager.Task is { IsCompleted: false }) return;
 
             var stageSceneManager = GameEntryPoint.EventManager;
-            if (!(stageSceneManager is global::StageSceneManager)) return;
+            var time = stageSceneManager is global::StageSceneManager
+                ? stageSceneManager.stageTimerManager.GetStageTimeMS()
+                : 0.0f;
 
             try
             {
                 LiveDataManager.Task = Main.Client.EmitAsync("stageUpdate", new StageUpdateData
                 {
-                    time = stageSceneManager.stageTimerManager.GetStageTimeMS(),
+                    time = time,
                     carData = CarData.FromCarController(__instance, ___drivetrain, ___body)
                 });
             }

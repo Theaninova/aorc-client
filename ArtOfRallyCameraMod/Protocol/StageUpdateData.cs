@@ -24,9 +24,9 @@ namespace ArtOfRallyChampionshipMod.Protocol
         public float velocity;
         public bool isStalling;
 
-        public static DrivetrainData FromDrivetrain(Drivetrain drivetrain)
+        public static DrivetrainData? FromDrivetrain(Drivetrain? drivetrain)
         {
-            return new DrivetrainData
+            return drivetrain == null ? (DrivetrainData?)null : new DrivetrainData
             {
                 wheelTireVelocity = drivetrain.wheelTireVelo,
                 velocity = drivetrain.velo,
@@ -47,6 +47,34 @@ namespace ArtOfRallyChampionshipMod.Protocol
     }
 
     [Serializable]
+    public struct InputData
+    {
+        public float throttleInput;
+        public float steeringInput;
+        public float brakeInput;
+        public float handbrakeInput;
+        public float clutchInput;
+        public bool absTriggered;
+        public bool tcsTriggered;
+        public bool espTriggered;
+
+        public static InputData? FromCarController(CarController? controller)
+        {
+            return controller == null ? (InputData?)null : new InputData
+            {
+                throttleInput = controller.throttleInput,
+                steeringInput = controller.steerInput,
+                brakeInput = controller.brakeInput,
+                handbrakeInput = controller.handbrakeInput,
+                clutchInput = controller.clutchInput,
+                absTriggered = controller.ABSTriggered,
+                tcsTriggered = controller.TCSTriggered,
+                espTriggered = controller.ESPTriggered,
+            };
+        }
+    }
+
+    [Serializable]
     public struct BrakeData
     {
         public float temperatureFront;
@@ -59,9 +87,9 @@ namespace ArtOfRallyChampionshipMod.Protocol
         public static FieldInfo? BrakeTemperatureBackFieldInfo =
             typeof(BrakeEffects).GetField("BrakeTemperatureBack", BindingFlags.NonPublic);
 
-        public static BrakeData FromBrakeEffects(BrakeEffects brakeEffects)
+        public static BrakeData? FromBrakeEffects(BrakeEffects? brakeEffects)
         {
-            return new BrakeData
+            return brakeEffects == null ? (BrakeData?)null : new BrakeData
             {
                 temperatureBack = (float)BrakeTemperatureBackFieldInfo?.GetValue(brakeEffects)!,
                 temperatureFront = (float)BrakeTemperatureFrontFieldInfo?.GetValue(brakeEffects)!
@@ -86,40 +114,43 @@ namespace ArtOfRallyChampionshipMod.Protocol
     }
 
     [Serializable]
-    public struct CarData
+    public struct PositionData
     {
         public float[] position;
         public float[] rotation;
         public float[] velocity;
-        public float throttleInput;
-        public float steeringInput;
-        public float brakeInput;
-        public float handbrakeInput;
-        public float clutchInput;
-        public bool absTriggered;
-        public bool tcsTriggered;
-        public bool espTriggered;
-        public BrakeData brakeData;
-        public DrivetrainData drivetrain;
-
-        public static CarData FromCarController(CarDynamics data, Drivetrain drivetrain, Rigidbody body)
+        
+        public static PositionData? FromRigidBody(Rigidbody? body)
         {
+            if (body == null) return null;
             var position1 = body.position;
             var rotation1 = body.rotation.eulerAngles;
             var velocity1 = body.velocity;
-            return new CarData
+            
+            return new PositionData
             {
                 position = new[] { position1.x, position1.y, position1.z },
                 rotation = new[] { rotation1.x, rotation1.y, rotation1.z },
                 velocity = new[] { velocity1.x, velocity1.y, velocity1.z },
-                throttleInput = data.carController.throttleInput,
-                steeringInput = data.carController.steerInput,
-                brakeInput = data.carController.brakeInput,
-                handbrakeInput = data.carController.handbrakeInput,
-                clutchInput = data.carController.clutchInput,
-                absTriggered = data.carController.ABSTriggered,
-                tcsTriggered = data.carController.TCSTriggered,
-                espTriggered = data.carController.ESPTriggered,
+            };
+        }
+    }
+    
+    [Serializable]
+    public struct CarData
+    {
+        public PositionData? positionData;
+        public InputData? inputData;
+        public BrakeData? brakeData;
+        public DrivetrainData? drivetrain;
+
+        public static CarData FromCarController(CarDynamics data, Drivetrain drivetrain, Rigidbody body)
+        {
+            
+            return new CarData
+            {
+                positionData = PositionData.FromRigidBody(body),
+                inputData = InputData.FromCarController(data.carController),
                 brakeData = BrakeData.FromBrakeEffects(data.brakeEffects),
                 drivetrain = DrivetrainData.FromDrivetrain(drivetrain),
             };

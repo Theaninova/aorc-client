@@ -117,10 +117,7 @@ export interface StageUpdateData {
   carData?: CarData
 }
 
-export interface CarData {
-  position: Vector3
-  rotation: Vector3
-  velocity: Vector3
+export interface InputData {
   throttleInput: number // float
   steeringInput: number // float
   brakeInput: number // float
@@ -129,8 +126,13 @@ export interface CarData {
   absTriggered: boolean
   tcsTriggered: boolean
   espTriggered: boolean
-  brakeData: BrakeData
-  drivetrain: DrivetrainData
+}
+
+export interface CarData {
+  positionData?: PositionData
+  inputData?: InputData
+  brakeData?: BrakeData
+  drivetrain?: DrivetrainData
 }
 
 export interface BrakeData {
