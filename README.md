@@ -82,6 +82,8 @@ interface ClientData<T> {
   user: string;
   data: T;
 }
+
+type Vector3 = [number, number, number]; // float
 ```
 
 ## Events
@@ -110,40 +112,56 @@ Emitted when the in-game timer changes
 **data**:
 
 ```ts
-type Vector3 = [number, number, number]; // float
-
-interface StageUpdateData {
-  time: number; // seconds fraction
-  carData?: {
-    position: Vector3;
-    rotation: Vector3;
-    velocity: Vector3;
-    throttleInput: number; // float
-    steeringInput: number; // float
-    brakeInput: number; // float
-    handbrakeInput: number; // float
-    clutchInput: number; // float
-    absTriggered: boolean;
-    tcsTriggered: boolean;
-    espTriggered: boolean;
-    drivetrain: {
-      clutch: number; // float
-      rpm: number; // float
-      torque: number; // float
-      gear: number; // int
-      wheelTireVelocity: number; // float
-      canStall: boolean;
-      throttle: number; // float
-      shiftTriggered: boolean;
-      canShiftAgain: boolean;
-      currentPower: number; // float
-      currentGearRatio: number; // float
-      isChangingGear: boolean;
-      velocity: number; // float
-      isStalling: boolean;
-    }
-  }
+export interface StageUpdateData {
+  time: number // seconds fraction
+  carData?: CarData
 }
+
+export interface CarData {
+  position: Vector3
+  rotation: Vector3
+  velocity: Vector3
+  throttleInput: number // float
+  steeringInput: number // float
+  brakeInput: number // float
+  handbrakeInput: number // float
+  clutchInput: number // float
+  absTriggered: boolean
+  tcsTriggered: boolean
+  espTriggered: boolean
+  brakeData: BrakeData
+  drivetrain: DrivetrainData
+}
+
+export interface BrakeData {
+  temperatureBack: number // float
+  temperatureFront: number // float
+}
+
+export interface DrivetrainData {
+  clutch: number // float
+  rpm: number // float
+  torque: number // float
+  gear: number // int
+  wheelTireVelocity: number // float
+  canStall: boolean
+  throttle: number // float
+  shiftTriggered: boolean
+  canShiftAgain: boolean
+  currentPower: number // float
+  currentGearRatio: number // float
+  isChangingGear: boolean
+  velocity: number // float
+  isStalling: boolean
+}
+```
+
+### `waypointsGathered`
+
+When the level has loaded, a list of all waypoints in that level will be sent
+
+```ts
+type waypoints = Vector3[]; // float
 ```
 
 ### `eventStart`

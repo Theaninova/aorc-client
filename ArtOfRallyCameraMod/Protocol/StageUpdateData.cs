@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using UnityEngine;
 
 // ReSharper disable InconsistentNaming
@@ -46,6 +47,45 @@ namespace ArtOfRallyChampionshipMod.Protocol
     }
 
     [Serializable]
+    public struct BrakeData
+    {
+        public float temperatureFront;
+        public float temperatureBack;
+
+        [NonSerialized]
+        public static FieldInfo? BrakeTemperatureFrontFieldInfo =
+            typeof(BrakeEffects).GetField("BrakeTemperatureFront", BindingFlags.NonPublic);
+        [NonSerialized]
+        public static FieldInfo? BrakeTemperatureBackFieldInfo =
+            typeof(BrakeEffects).GetField("BrakeTemperatureBack", BindingFlags.NonPublic);
+
+        public static BrakeData FromBrakeEffects(BrakeEffects brakeEffects)
+        {
+            return new BrakeData
+            {
+                temperatureBack = (float)BrakeTemperatureBackFieldInfo?.GetValue(brakeEffects)!,
+                temperatureFront = (float)BrakeTemperatureFrontFieldInfo?.GetValue(brakeEffects)!
+            };
+        }
+    }
+
+    [Serializable]
+    public struct WingData
+    {
+        public float downForce;
+        public float dragForce;
+
+        public static WingData FromWing(Wing wing)
+        {
+            return new WingData
+            {
+                downForce = wing.downForce,
+                dragForce = wing.dragForce
+            };
+        }
+    }
+
+    [Serializable]
     public struct CarData
     {
         public float[] position;
@@ -59,9 +99,10 @@ namespace ArtOfRallyChampionshipMod.Protocol
         public bool absTriggered;
         public bool tcsTriggered;
         public bool espTriggered;
+        public BrakeData brakeData;
         public DrivetrainData drivetrain;
 
-        public static CarData FromCarController(CarController data, Drivetrain drivetrain, Rigidbody body)
+        public static CarData FromCarController(CarDynamics data, Drivetrain drivetrain, Rigidbody body)
         {
             var position1 = body.position;
             var rotation1 = body.rotation.eulerAngles;
@@ -71,14 +112,15 @@ namespace ArtOfRallyChampionshipMod.Protocol
                 position = new[] { position1.x, position1.y, position1.z },
                 rotation = new[] { rotation1.x, rotation1.y, rotation1.z },
                 velocity = new[] { velocity1.x, velocity1.y, velocity1.z },
-                throttleInput = data.throttleInput,
-                steeringInput = data.steerInput,
-                brakeInput = data.brakeInput,
-                handbrakeInput = data.handbrakeInput,
-                clutchInput = data.clutchInput,
-                absTriggered = data.ABSTriggered,
-                tcsTriggered = data.TCSTriggered,
-                espTriggered = data.ESPTriggered,
+                throttleInput = data.carController.throttleInput,
+                steeringInput = data.carController.steerInput,
+                brakeInput = data.carController.brakeInput,
+                handbrakeInput = data.carController.handbrakeInput,
+                clutchInput = data.carController.clutchInput,
+                absTriggered = data.carController.ABSTriggered,
+                tcsTriggered = data.carController.TCSTriggered,
+                espTriggered = data.carController.ESPTriggered,
+                brakeData = BrakeData.FromBrakeEffects(data.brakeEffects),
                 drivetrain = DrivetrainData.FromDrivetrain(drivetrain),
             };
         }

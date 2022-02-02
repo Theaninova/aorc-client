@@ -15,11 +15,11 @@ namespace ArtOfRallyChampionshipMod.Patches.CarController
         public static Task? Task;
     }
     
-    [HarmonyPatch(typeof(global::CarController), "FixedUpdate")]
+    [HarmonyPatch(typeof(CarDynamics), "FixedUpdate")]
     public class FixedUpdate
     {
         // ReSharper disable once InconsistentNaming
-        public static void Postfix(global::CarController __instance, Drivetrain ___drivetrain, Rigidbody ___body)
+        public static void Postfix(CarDynamics __instance, Drivetrain ___drivetrain, Rigidbody ___body)
         {
             if (LiveDataManager.Task is { IsCompleted: false }) return;
 
@@ -28,15 +28,10 @@ namespace ArtOfRallyChampionshipMod.Patches.CarController
 
             try
             {
-                var recording = ReplayManager.Instance().CurrentReplayDataRecording();
-                var dataExists = recording != null && recording.keys.Count != 0;
-
                 LiveDataManager.Task = Main.Client.EmitAsync("stageUpdate", new StageUpdateData
                 {
                     time = stageSceneManager.stageTimerManager.GetStageTimeMS(),
-                    carData = dataExists
-                        ? CarData.FromCarController(__instance, ___drivetrain, ___body)
-                        : (CarData?)null,
+                    carData = CarData.FromCarController(__instance, ___drivetrain, ___body)
                 });
             }
             catch (Exception e)
