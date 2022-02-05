@@ -75,11 +75,11 @@ namespace ArtOfRallyChampionshipMod.Patches.ReplayManager
             GhostManager.GhostData? ____currentData,
             bool ____createdGhost)
         {
-            if (!Main.Settings.EnableMultiplayer || MultiplayerConnectionManager.CurrentCar == null) return false;
+            if (!Main.Settings.EnableMultiplayer) return true;
 
             Shader.SetGlobalVector(____playerPosition,
                 GameEntryPoint.EventManager.playerManager.PlayerObject.transform.position);
-            if (____currentData == null || ____ghostTransform == null)
+            if (____currentData == null || ____ghostTransform == null || MultiplayerConnectionManager.CurrentCar == null)
             {
                 return false;
             }
