@@ -1,5 +1,5 @@
-﻿using System.Collections.Generic;
-using System.Reflection;
+﻿using System.Reflection;
+using ArtOfRallyChampionshipMod.Control;
 using ArtOfRallyChampionshipMod.Extraction.Live;
 using ArtOfRallyChampionshipMod.Protocol;
 using HarmonyLib;
@@ -9,7 +9,6 @@ using Newtonsoft.Json.Converters;
 using SocketIOClient;
 using SocketIOClient.Newtonsoft.Json;
 using SocketIOClient.Transport;
-using UnityEngine;
 using UnityModManagerNet;
 
 namespace ArtOfRallyChampionshipMod
@@ -51,11 +50,11 @@ namespace ArtOfRallyChampionshipMod
             Client.OnConnected += (sender, args) =>
             {
                 Logger.Log("Connected to server!");
-                Client.EmitAsync("carsInfo", Newtonsoft.Json.JsonConvert.SerializeObject(
+                Client.EmitAsync("carsInfo", JsonConvert.SerializeObject(
                     CarManager.AllCarsList, new StringEnumConverter()));
-                Client.EmitAsync("stagesInfo", Newtonsoft.Json.JsonConvert.SerializeObject(
+                Client.EmitAsync("stagesInfo", JsonConvert.SerializeObject(
                     AreaManager.AreaDictionary, new StringEnumConverter()));
-                Client.EmitAsync("translationsGathered", Newtonsoft.Json.JsonConvert.SerializeObject(
+                Client.EmitAsync("translationsGathered", JsonConvert.SerializeObject(
                     LocalizationManager.Sources, new StringEnumConverter()));
             };
             Client.OnDisconnected += (sender, s) => Logger.Warning("Got disconnected");
@@ -67,6 +66,14 @@ namespace ArtOfRallyChampionshipMod
                 MultiplayerConnectionManager.LastCar = MultiplayerConnectionManager.CurrentCar;
                 MultiplayerConnectionManager.CurrentCar = data.ToNative();
             });
+
+            // Multiplayer
+            Client.On(InitiateRally.MultiplayerLoadMap,
+                response => InitiateRally.StartRallyRemotely(response.GetValue<LoadMapData>()));
+            Client.On(InitiateRally.MultiplayerChangeMap,
+                response => InitiateRally.ChangeMode(response.GetValue<GameModeManager.GAME_MODES>()));
+            Client.On(InitiateRally.MultiplayerChangeRally,
+                response => InitiateRally.ChangeRallyData(response.GetValue<string>()));
             await Client.ConnectAsync();
         }
     }
