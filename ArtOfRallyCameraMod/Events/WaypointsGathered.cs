@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using HarmonyLib;
 using UnityEngine;
 
-namespace ArtOfRallyChampionshipMod.Patches.OutOfBoundsManager
+namespace ArtOfRallyChampionshipMod.Events
 {
     [HarmonyPatch(typeof(global::OutOfBoundsManager), nameof(global::OutOfBoundsManager.Start))]
     public class Start

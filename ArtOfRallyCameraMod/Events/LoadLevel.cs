@@ -3,7 +3,7 @@
 // ReSharper disable UnusedType.Global
 // ReSharper disable UnusedMember.Global
 
-namespace ArtOfRallyChampionshipMod.Patches.SceneLoader
+namespace ArtOfRallyChampionshipMod.Events
 {
     [HarmonyPatch(typeof(global::SceneLoader), nameof(global::SceneLoader.LoadLevel))]
     public class LoadLevel

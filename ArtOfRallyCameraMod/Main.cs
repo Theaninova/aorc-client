@@ -1,7 +1,11 @@
-﻿using System.Reflection;
-using ArtOfRallyChampionshipMod.Patches.ReplayManager;
+﻿using System.Collections.Generic;
+using System.Reflection;
+using ArtOfRallyChampionshipMod.Extraction.Live;
 using ArtOfRallyChampionshipMod.Protocol;
 using HarmonyLib;
+using I2.Loc;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using SocketIOClient;
 using SocketIOClient.Newtonsoft.Json;
 using SocketIOClient.Transport;
@@ -34,22 +38,9 @@ namespace ArtOfRallyChampionshipMod
             // modEntry.OnFixedGUI = EditorGUI.OnFixedGUI;
             modEntry.OnGUI = entry => Settings.Draw(entry);
             modEntry.OnSaveGUI = entry => Settings.Save(entry);
-            var labelRect = new Rect(70, 40, 200, 200);
-            modEntry.OnFixedGUI = entry =>
-            {
-                if (MultiplayerConnectionManager.CurrentCar != null)
-                {
-                    var pos = MultiplayerConnectionManager.CurrentCar.Value.position;
-                    GUI.Label(labelRect, $"{pos.x} {pos.y} {pos.z}");
-                }
-                else
-                {
-                    GUI.Label(labelRect, "No data received");
-                }
-            };
-            
+
             Connect();
-            
+
             return true;
         }
 
@@ -57,10 +48,19 @@ namespace ArtOfRallyChampionshipMod
         {
             Client.JsonSerializer = new NewtonsoftJsonSerializer();
             Client.OnError += (sender, error) => Logger.Error(error);
-            Client.OnConnected += (sender, args) => Logger.Log("Connected to server!");
+            Client.OnConnected += (sender, args) =>
+            {
+                Logger.Log("Connected to server!");
+                Client.EmitAsync("carsInfo", Newtonsoft.Json.JsonConvert.SerializeObject(
+                    CarManager.AllCarsList, new StringEnumConverter()));
+                Client.EmitAsync("stagesInfo", Newtonsoft.Json.JsonConvert.SerializeObject(
+                    AreaManager.AreaDictionary, new StringEnumConverter()));
+                Client.EmitAsync("translationsGathered", Newtonsoft.Json.JsonConvert.SerializeObject(
+                    LocalizationManager.Sources, new StringEnumConverter()));
+            };
             Client.OnDisconnected += (sender, s) => Logger.Warning("Got disconnected");
             Client.OnReconnectAttempt += (sender, i) => Logger.Log($"Trying to reconnect {i}x");
-            
+
             Client.On("replayReceived", response =>
             {
                 var data = response.GetValue<MultiplayerCar>();

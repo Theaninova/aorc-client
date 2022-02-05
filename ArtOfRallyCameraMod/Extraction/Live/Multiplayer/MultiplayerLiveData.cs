@@ -1,9 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
+﻿using System.Reflection;
 using System.Threading.Tasks;
 using ArtOfRallyChampionshipMod.Protocol;
 using HarmonyLib;
@@ -13,7 +8,7 @@ using UnityEngine;
 // ReSharper disable UnusedMember.Global
 // ReSharper disable InconsistentNaming
 
-namespace ArtOfRallyChampionshipMod.Patches.ReplayManager
+namespace ArtOfRallyChampionshipMod.Extraction.Live
 {
     public static class MultiplayerConnectionManager
     {
@@ -21,43 +16,10 @@ namespace ArtOfRallyChampionshipMod.Patches.ReplayManager
         public static NativeMultiplayerCar? CurrentCar;
 
         public static NativeMultiplayerCar? LastCar;
-        // public static FakeList<ReplayKey_Car>? FakeListInstance = null;
-        // public static BinaryFormatter formatter = new BinaryFormatter();
 
         public static MethodInfo? FadeCarInfo =
             typeof(global::ReplayManager).GetMethod("FadeCar", BindingFlags.Instance | BindingFlags.NonPublic);
     }
-
-   /* public class FakeList<T> : List<T>
-    {
-        public T one;
-        public T two;
-        public bool useTwo;
-
-        // ReSharper disable once UnusedParameter.Global
-        public FakeList(T one, T two)
-        {
-            this.one = one;
-            this.two = two;
-        }
-
-        public new T this[int index]
-        {
-            get
-            {
-                Main.Logger.Log($"Supplied {useTwo}");
-                if (useTwo)
-                {
-                    return two;
-                }
-
-                useTwo = true;
-                return one;
-            }
-            // ReSharper disable once ValueParameterNotUsed
-            set { }
-        }
-    }*/
 
     [HarmonyPatch(typeof(GhostManager), nameof(GhostManager.UpdateGhost))]
     public class UpdateGhost
