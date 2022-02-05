@@ -32,11 +32,11 @@ namespace ArtOfRallyChampionshipMod.Patches.CarController
 
             try
             {
-                LiveDataManager.Task = Main.Client.EmitAsync("stageUpdate", new StageUpdateData
+                /*LiveDataManager.Task = Main.Client.EmitAsync("stageUpdate", new StageUpdateData
                 {
                     time = time,
                     carData = CarData.FromCarController(__instance, ___drivetrain, ___body, ___cardynamics)
-                });
+                });*/
             }
             catch (Exception e)
             {

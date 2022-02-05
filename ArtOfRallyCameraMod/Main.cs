@@ -1,8 +1,11 @@
 ﻿using System.Reflection;
+using ArtOfRallyChampionshipMod.Patches.ReplayManager;
+using ArtOfRallyChampionshipMod.Protocol;
 using HarmonyLib;
 using SocketIOClient;
 using SocketIOClient.Newtonsoft.Json;
 using SocketIOClient.Transport;
+using UnityEngine;
 using UnityModManagerNet;
 
 namespace ArtOfRallyChampionshipMod
@@ -31,6 +34,19 @@ namespace ArtOfRallyChampionshipMod
             // modEntry.OnFixedGUI = EditorGUI.OnFixedGUI;
             modEntry.OnGUI = entry => Settings.Draw(entry);
             modEntry.OnSaveGUI = entry => Settings.Save(entry);
+            var labelRect = new Rect(70, 40, 200, 200);
+            modEntry.OnFixedGUI = entry =>
+            {
+                if (MultiplayerConnectionManager.CurrentCar != null)
+                {
+                    var pos = MultiplayerConnectionManager.CurrentCar.Value.position;
+                    GUI.Label(labelRect, $"{pos.x} {pos.y} {pos.z}");
+                }
+                else
+                {
+                    GUI.Label(labelRect, "No data received");
+                }
+            };
             
             Connect();
             
@@ -44,6 +60,13 @@ namespace ArtOfRallyChampionshipMod
             Client.OnConnected += (sender, args) => Logger.Log("Connected to server!");
             Client.OnDisconnected += (sender, s) => Logger.Warning("Got disconnected");
             Client.OnReconnectAttempt += (sender, i) => Logger.Log($"Trying to reconnect {i}x");
+            
+            Client.On("replayReceived", response =>
+            {
+                var data = response.GetValue<MultiplayerCar>();
+                MultiplayerConnectionManager.LastCar = MultiplayerConnectionManager.CurrentCar;
+                MultiplayerConnectionManager.CurrentCar = data.ToNative();
+            });
             await Client.ConnectAsync();
         }
     }
