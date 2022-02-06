@@ -7,6 +7,28 @@ using UnityEngine;
 namespace ArtOfRallyChampionshipMod.Protocol
 {
     [Serializable]
+    public struct AssistanceData
+    {
+        public float absTriggered;
+        public float tcsTriggered;
+        public float espTriggered;
+
+        public static AssistanceData? FromController(CarController? controller, AssistanceData? last)
+        {
+            if (controller == null) return null;
+            const float decay = 0.1f;
+            var decayDelta = Time.deltaTime / decay;
+
+            return new AssistanceData
+            {
+                absTriggered = Math.Max(controller.ABSTriggered ? 1f : 0f, (last?.absTriggered ?? 0f) - decayDelta),
+                tcsTriggered = Math.Max(controller.TCSTriggered ? 1f : 0f, (last?.tcsTriggered ?? 0f) - decayDelta),
+                espTriggered = Math.Max(controller.ESPTriggered ? 1f : 0f, (last?.espTriggered ?? 0f) - decayDelta)
+            };
+        }
+    }
+
+    [Serializable]
     public struct DrivetrainData
     {
         public float clutch;
@@ -56,9 +78,6 @@ namespace ArtOfRallyChampionshipMod.Protocol
         public float brakeInput;
         public float handbrakeInput;
         public float clutchInput;
-        public bool absTriggered;
-        public bool tcsTriggered;
-        public bool espTriggered;
 
         public static InputData? FromCarController(CarController? controller)
         {
@@ -71,9 +90,6 @@ namespace ArtOfRallyChampionshipMod.Protocol
                     brakeInput = controller.brakeInput,
                     handbrakeInput = controller.handbrakeInput,
                     clutchInput = controller.clutchInput,
-                    absTriggered = controller.ABSTriggered,
-                    tcsTriggered = controller.TCSTriggered,
-                    espTriggered = controller.ESPTriggered,
                 };
         }
     }
@@ -150,9 +166,10 @@ namespace ArtOfRallyChampionshipMod.Protocol
         public InputData? inputData;
         public BrakeData? brakeData;
         public DrivetrainData? drivetrain;
+        public AssistanceData? assistance;
 
         public static CarData FromCarController(CarController? data, Drivetrain? drivetrain, Rigidbody? body,
-            CarDynamics? dynamics)
+            CarDynamics? dynamics, CarData? last)
         {
             return new CarData
             {
@@ -160,6 +177,7 @@ namespace ArtOfRallyChampionshipMod.Protocol
                 inputData = data == null ? null : InputData.FromCarController(data),
                 brakeData = dynamics == null ? null : BrakeData.FromBrakeEffects(dynamics.brakeEffects),
                 drivetrain = DrivetrainData.FromDrivetrain(drivetrain),
+                assistance = AssistanceData.FromController(data, last?.assistance)
             };
         }
     }
