@@ -6,10 +6,10 @@ using HarmonyLib;
 
 namespace ArtOfRallyChampionshipMod.Events
 {
-    [HarmonyPatch(typeof(global::StageSceneManager), nameof(global::StageSceneManager.OnEventOver))]
+    [HarmonyPatch(typeof(StageSceneManager), nameof(StageSceneManager.OnEventOver))]
     public class OnEventOver
     {
-        public static void Postfix(global::StageSceneManager __instance)
+        public static void Postfix(StageSceneManager __instance)
         {
         }
     }

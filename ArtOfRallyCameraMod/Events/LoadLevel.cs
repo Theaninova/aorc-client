@@ -5,7 +5,7 @@
 
 namespace ArtOfRallyChampionshipMod.Events
 {
-    [HarmonyPatch(typeof(global::SceneLoader), nameof(global::SceneLoader.LoadLevel))]
+    [HarmonyPatch(typeof(SceneLoader), nameof(SceneLoader.LoadLevel))]
     public class LoadLevel
     {
         public static void Prefix(int __0)

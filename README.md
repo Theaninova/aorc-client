@@ -112,9 +112,16 @@ Emitted when the in-game timer changes
 **data**:
 
 ```ts
-export interface StageUpdateData {
-  time: number // seconds fraction
-  carData?: CarData
+export interface PositionData {
+  position: Vector3
+  rotation: Vector3
+  velocity: Vector3
+}
+
+export interface AssistanceData {
+  absTriggered: number // float
+  tcsTriggered: number // float
+  espTriggered: number // float
 }
 
 export interface InputData {
@@ -123,9 +130,6 @@ export interface InputData {
   brakeInput: number // float
   handbrakeInput: number // float
   clutchInput: number // float
-  absTriggered: boolean
-  tcsTriggered: boolean
-  espTriggered: boolean
 }
 
 export interface CarData {
@@ -133,6 +137,7 @@ export interface CarData {
   inputData?: InputData
   brakeData?: BrakeData
   drivetrain?: DrivetrainData
+  assistance?: AssistanceData
 }
 
 export interface BrakeData {
@@ -154,8 +159,7 @@ export interface DrivetrainData {
   currentGearRatio: number // float
   isChangingGear: boolean
   velocity: number // float
-  isStalling: boolean
-}
+  isStalli
 ```
 
 ### `waypointsGathered`
@@ -177,6 +181,14 @@ interface EventOverData {
   penalties: number; // int
 }
 ```
+
+### `carsInfo`
+
+**data**: takes whatever raw data there is in memory and serializes it to JSON.
+
+### `stagesInfo`
+
+**data**: takes whatever raw data there is in memory and serializes it to JSON.
 
 ## Actions
 
